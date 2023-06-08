@@ -69,7 +69,7 @@ class Fighters {
     this.position.y += this.velocity.y;
 
     //cheking the player is on gorund or not
-    if (this.position.y + this.height + this.velocity.y >= canvas.height) {
+    if (this.position.y + this.height + this.velocity.y >= canvas.height - 96) {
       this.velocity.y = 0;
     } else
       this.velocity.y += gravity;
