@@ -17,6 +17,17 @@ const background = new Sprite({
   imgSrc : './img/background.png' 
 })
 
+//creating a shop with animation
+const shop = new Sprite({
+  position : {
+    x:650,
+    y:223
+  },
+  imgSrc : './img/shop.png',
+  scale : 2,
+  frameMax : 6
+})
+
 //creating a new instance of player using the Sprite class
 const player = new Fighters({
   position: {
@@ -27,10 +38,36 @@ const player = new Fighters({
     x: 0,
     y: 0
   },
-  offset: {
-    x: 0,
-    y: 0
+  imgSrc : './img/samuraiMack/idle.png',
+  scale : 2,
+  frameMax : 8,
+  offset : {
+    x : 120,
+    y : 90
+  },
+  sprites : {
+    idle : {
+      imgSrc : './img/samuraiMack/idle.png',
+      frameMax : 8
+    },
+    run : {
+      imgSrc : './img/samuraiMack/Run.png',
+      frameMax : 8
+    },
+    jump : {
+      imgSrc : './img/samuraiMack/Jump.png',
+      frameMax : 2
+    },
+    fall : {
+      imgSrc : './img/samuraiMack/Fall.png',
+      frameMax : 2
+    },
+    attack1 : {
+      imgSrc : './img/samuraiMack/Attack1.png',
+      frameMax : 6
+    }
   }
+
 });
 player.draw()
 
@@ -42,16 +79,40 @@ const enemy = new Fighters({
   },
   velocity: {
     x: 0,
-    y: 0,
-  },
-  offset: {
-    x: 50,
     y: 0
   },
-  color: "blue"
+  imgSrc : './img/kenji/idle.png',
+  scale : 2,
+  frameMax : 4,
+  offset : {
+    x : 120,
+    y : 100
+  },
+  sprites : {
+    idle : {
+      imgSrc : './img/kenji/idle.png',
+      frameMax : 4 
+    },
+    run : {
+      imgSrc : './img/kenji/Run.png',
+      frameMax : 8
+    },
+    jump : {
+      imgSrc : './img/kenji/Jump.png',
+      frameMax : 2
+    },
+    fall : {
+      imgSrc : './img/kenji/Fall.png',
+      frameMax : 2
+    },
+    attack1 : {
+      imgSrc : './img/kenji/Attack1.png',
+      frameMax : 4
+    }
+  }
+
 });
 enemy.draw()
-console.log(player);
 
 //defing the key for the max proper movements of players
 const keys = {
@@ -77,22 +138,46 @@ function animate() {
   c.fillStyle = 'black';
   c.fillRect(0, 0, canvas.width, canvas.height);
   background.update();
+  shop.update()
   player.update();
   enemy.update();
 
   //player movement
   player.velocity.x = 0
-  if (keys.a.pressed && player.lastKey === 'a')
+  enemy.velocity.x = 0
+  if (keys.a.pressed && player.lastKey === 'a'){
     player.velocity.x = -5;
-  else if (keys.d.pressed && player.lastKey === 'd')
+    player.switchSprites('run');
+  }else if (keys.d.pressed && player.lastKey === 'd'){
     player.velocity.x = 5
+    player.switchSprites('run');
+  }else{
+    player.switchSprites('idle');
+  }
+  //jumping
+  if(player.velocity.y < 0){
+    player.switchSprites('jump');
+  }else if(player.velocity.y > 0 ){
+    player.switchSprites('fall');
+  }
+
 
   //enemy movement
   enemy.velocity.x = 0
-  if (keys.ArrowLeft.pressed && enemy.lastKey === 'ArrowLeft')
+  if (keys.ArrowLeft.pressed && enemy.lastKey === 'ArrowLeft'){
     enemy.velocity.x = -5;
-  else if (keys.ArrowRight.pressed && enemy.lastKey === 'ArrowRight')
+    enemy.switchSprites('run');
+  }else if (keys.ArrowRight.pressed && enemy.lastKey === 'ArrowRight'){
     enemy.velocity.x = 5
+    enemy.switchSprites('run');
+  }else enemy.switchSprites('idle');
+
+  //jumping
+  if(enemy.velocity.y < 0){
+    enemy.switchSprites('jump');
+  }else if(enemy.velocity.y > 0 ){
+    enemy.switchSprites('fall');
+  }
 
   //detect collition
   if (rectagularCollition({
